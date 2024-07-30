@@ -1,0 +1,99 @@
+body {
+  background-color: rgb(25, 25, 25);
+  font-family: "Roboto", sans-serif;
+  color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Board */
+.board-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  /* overflow: hidden; */
+}
+
+.board-column {
+  display: grid;
+  align-items: start;
+  gap: 8px;
+  width: 100%;
+  max-width: 260px;
+  padding: 5px;
+}
+
+.header-column-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 100vmax;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 100vmax;
+}
+
+.column-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Colors */
+/* Labels */
+.label__red {
+  background-color: rgb(110, 54, 48);
+}
+
+.label__blue {
+  background-color: rgb(40, 69, 108);
+}
+
+.label__green {
+  background-color: rgb(43, 89, 63);
+}
+
+/* Dots */
+.dot__red {
+  background-color: rgb(205, 73, 69);
+}
+
+.dot__blue {
+  background-color: rgb(46, 124, 209);
+}
+
+.dot__green {
+  background-color: rgb(45, 153, 100);
+}
+
+/* Test */
+.droppable-box {
+  width: 100%;
+  min-height: 100px;
+}
+
+.draggable-box {
+  background-color: rgb(47, 47, 47);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.draggable-box:hover {
+  background-color: rgb(58, 58, 58);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
