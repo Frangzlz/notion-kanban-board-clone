@@ -1,11 +1,12 @@
 import { useDroppable } from "@dnd-kit/core";
-import { PropsDragDrop } from "../types";
+import { PropsDrop } from "../types";
+import "./Droppable.css"
 
-export function Droppable ({ children, id }: PropsDragDrop) {
+export function Droppable ({ children, id }: PropsDrop) {
   const { isOver, setNodeRef } = useDroppable({ id: id })
  
   return (
-    <div ref={setNodeRef} className="droppable-box">
+    <div ref={setNodeRef} className={`droppable-box ${isOver ? 'isOverStyle' : ''}`}>
       {children}
     </div>
   )

@@ -1,0 +1,66 @@
+.draggable-box {
+  background-color: rgb(47, 47, 47);
+  font-weight: 500;
+  border-radius: 5px;
+  margin-bottom: 6px;
+}
+
+.draggable-box:hover {
+  background-color: rgb(58, 58, 58);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.draggable-dropbox {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+}
+
+.isOverDraggable {
+  border-top: 5px solid rgb(85, 85, 255);
+}
+
+/* Buttons */
+.button-edit {
+  background-color: transparent;
+  border: none;
+  padding: 3px 6px;
+}
+
+.button-delete {
+  background-color: transparent;
+  border: none;
+  padding: 3px 6px;
+}
+
+/* Input */
+.container-input-edit {
+  display: flex;
+  column-gap: 5px;
+  width: 100%;
+}
+
+.input-edit {
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* .container-button-drag {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 10px;
+  background-color: rgb(47, 47, 47);
+  border: 1px solid rgb(47, 47, 47);
+  border-radius: 10px;
+} */
