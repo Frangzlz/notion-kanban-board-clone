@@ -1,9 +1,10 @@
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { Draggable } from "./Draggable.tsx";
 import { Droppable } from "./Droppable.tsx";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragItem, DropBox } from "../types";
-import { PlusButtonIcon } from "./icons/Icons.tsx";
+import { DocumentIcon, PlusButtonIcon } from "./icons/Icons.tsx";
+import { v4 as uuidv4 } from 'uuid';
 import "./Board.css"
 
 export function Board () {
@@ -42,25 +43,29 @@ export function Board () {
     }
   ]
 
-  const [dragItems, setDragItems] = useState(draggableItems)
+  const tasksFromLocalStorage = localStorage.getItem('__tasksState__')
+  const [dragItems, setDragItems] = useState(tasksFromLocalStorage ? JSON.parse(tasksFromLocalStorage) : draggableItems)
+
   const [inputText, setInputText] = useState('')
   const [showInput, setShowInput] = useState<{ [key: string]: boolean }>({})
+
+  const [isOverDroppable, setIsOverDroppable] = useState<{ [key: string]: boolean }>({})
+
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor)
+  )
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { over, active } = event
 
     if (!over) return
-
     if (over.id === active.id) return
 
+    const activeIndex = dragItems.findIndex((item: DragItem) => item.id === active.id)
+    const overIndex = dragItems.findIndex((item: DragItem) => item.id === over.id)
+
     if (droppableBoxes.some(item => item.id === over.id)) {
-      // const newDragItemsState = dragItems.map((item) => (
-      //   item.id === active.id
-      //     ? { ...item, parentId: over?.id.toString() }
-      //     : item
-      // ))
-      // setDragItems(newDragItemsState)
-      const activeIndex = dragItems.findIndex((item) => item.id === active.id)
       const auxDragItems = [...dragItems]
       const [deletedItem] = auxDragItems.splice(activeIndex, 1)
       auxDragItems.push(deletedItem)
@@ -73,22 +78,19 @@ export function Board () {
       setDragItems(newDragItemsState)
     }
 
-    const activeIndex = dragItems.findIndex((item) => item.id === active.id)
-    const overIndex = dragItems.findIndex((item) => item.id === over.id)
-
     if (activeIndex !== -1 && overIndex !== -1) {
       const newDragItemsState = [...dragItems]
       const [deletedActiveItem] = newDragItemsState.splice(activeIndex, 1)
-      newDragItemsState.splice(overIndex, 0, deletedActiveItem)
 
       if (dragItems[overIndex].parentId !== deletedActiveItem.parentId) {
-        // const auxDragItemParentId = dragItems[overIndex].parentId
-        // dragItems[overIndex].parentId = deletedActiveItem.parentId
-        // deletedActiveItem.parentId = auxDragItemParentId
+        if (overIndex === 0) {
+          newDragItemsState.splice(overIndex, 0, deletedActiveItem)
+        } else {
+          newDragItemsState.splice(overIndex - 1, 0, deletedActiveItem)
+        }
         deletedActiveItem.parentId = dragItems[overIndex].parentId
-        // console.log(dragItems[overIndex])
-        // console.log(deletedActiveItem)
-        // console.log(newDragItemsState)
+      } else {
+        newDragItemsState.splice(overIndex, 0, deletedActiveItem)
       }
 
       setDragItems(newDragItemsState)
@@ -105,12 +107,23 @@ export function Board () {
   }
 
   const addNewTask = (dropBoxId: string) => {
+    const textWithoutSpace = inputText.trim()
+
+    if (!textWithoutSpace) {
+      setInputText('')
+      setShowInput((prevState) => ({
+        ...prevState,
+        [dropBoxId]: false
+      }))
+      return
+    }
+
     const newTask: DragItem = {
-      id: `drag-item-${dragItems.length + 1}`,
-      text: inputText === '' ? 'Sin Titulo' : inputText,
+      id: `drag-box-${uuidv4()}`,
+      text: textWithoutSpace,
       parentId: dropBoxId
     }
-    setDragItems(prevState => [...prevState, newTask])
+    setDragItems((prevState: DragItem[]) => [...prevState, newTask])
 
     setInputText('')
     setShowInput((prevState) => ({
@@ -122,20 +135,26 @@ export function Board () {
   const handleDeleteButton = (event: React.MouseEvent<HTMLButtonElement>, dragItemId: string) => {
     event.stopPropagation()
     if (event.button === 0) {
-      const newDragItems = dragItems.filter((item) => item.id !== dragItemId)
+      const newDragItems = dragItems.filter((item: DragItem) => item.id !== dragItemId)
       setDragItems(newDragItems)
     }
   }
 
   const handleEditButton = (newText: string, dragItemId: string) => {
-    const editedTask = dragItems.map((item) => {
+    const newTextWithoutSpace = newText.trim()
+
+    if (!newTextWithoutSpace) {
+      return;
+    }
+
+    const editedTask = dragItems.map((item: DragItem) => {
       if (item.id !== dragItemId) return item
-      return { ...item, text: newText }
+      return { ...item, text: newTextWithoutSpace }
     })
 
-    console.log(editedTask)
-
     setDragItems(editedTask)
+
+    return newTextWithoutSpace
   }
 
   const handleInputBlur = (dropBoxId: string) => {
@@ -153,62 +172,81 @@ export function Board () {
     }
   }
 
+  const toggleIsOverDroppable = (id: string, isOver: boolean) => {
+    setIsOverDroppable((prevState) => ({
+      ...prevState,
+      [id]: isOver
+    }))
+  }
+
+  useEffect(() => {
+    localStorage.setItem('__tasksState__', JSON.stringify(dragItems))
+  }, [dragItems])
+
   return (
     <div className="board-container">
       <DndContext
         onDragEnd={handleDragEnd}
+        sensors={sensors}
       >
-        {
-          droppableBoxes.map((dropBox) => (
-            <div className="board-column" key={dropBox.id}>
-              <header className="header-column-text">
-                <span className={`label-container label__${dropBox.color}`}>
-                  <div className={`dot dot__${dropBox.color}`}></div>
-                  <span className="column-label">{dropBox.text}</span>
-                </span>
-                <div className="column-number-tasks">
-                  {dragItems.filter((item) => item.parentId === dropBox.id).length}
-                </div>
-              </header>
-              <Droppable id={dropBox.id}>
-                {
-                  dragItems
-                    .filter((item) => item.parentId === dropBox.id)
-                    .map((item) => (
-                      <Draggable
-                        key={item.id}
-                        id={item.id}
-                        text={item.text}
-                        handleDeleteButton={handleDeleteButton}
-                        handleEditButton={handleEditButton}
-                      />
-                  ))
-                }
-                {
-                  showInput[dropBox.id] &&
-                    <div className="container-input-task">
-                      <input
-                        id="input-add-task"
-                        className="input-add-task"
-                        type="text"
-                        autoFocus
-                        value={inputText}
-                        onBlur={() => handleInputBlur(dropBox.id)}
-                        onKeyDown={(event) => handleKeyDown(event, dropBox.id)}
-                        onChange={(event) => setInputText(event.target.value)}
-                      />
-                    </div>
-                }
-                <footer className="button-container" onClick={() => handleButtonClick(dropBox.id)}>
-                  <PlusButtonIcon />
-                  <button className="button-new-item">
-                    New item
-                  </button>
-                </footer>
-              </Droppable>
-            </div>
-          ))
-        }
+        <div className="board-content">
+          {
+            droppableBoxes.map((dropBox) => (
+              <div className="board-column" key={dropBox.id}>
+                <header className="header-column-text">
+                  <span className={`label-container label__${dropBox.color}`}>
+                    <div className={`dot dot__${dropBox.color}`}></div>
+                    <span className="column-label">{dropBox.text}</span>
+                  </span>
+                  <div className="column-number-tasks">
+                    {dragItems.filter((item: DragItem) => item.parentId === dropBox.id).length}
+                  </div>
+                </header>
+                <Droppable
+                  id={dropBox.id}
+                  toggleIsOverDroppable={toggleIsOverDroppable}
+                >
+                  {
+                    dragItems
+                      .filter((item: DragItem) => item.parentId === dropBox.id)
+                      .map((item: DragItem) => (
+                        <Draggable
+                          key={item.id}
+                          id={item.id}
+                          text={item.text}
+                          handleDeleteButton={handleDeleteButton}
+                          handleEditButton={handleEditButton}
+                        />
+                    ))
+                  }
+                  <div className={`line-is-over-droppable ${isOverDroppable[dropBox.id] ? 'is-over-drop' : ''}`}></div>
+                  {
+                    showInput[dropBox.id] &&
+                      <div className="container-input-task">
+                        <DocumentIcon />
+                        <input
+                          id="input-add-task"
+                          className="input-add-task"
+                          type="text"
+                          autoFocus
+                          value={inputText}
+                          onBlur={() => handleInputBlur(dropBox.id)}
+                          onKeyDown={(event) => handleKeyDown(event, dropBox.id)}
+                          onChange={(event) => setInputText(event.target.value)}
+                        />
+                      </div>
+                  }
+                  <footer className="button-container" onClick={() => handleButtonClick(dropBox.id)}>
+                    <PlusButtonIcon />
+                    <button className="button-new-item">
+                      New item
+                    </button>
+                  </footer>
+                </Droppable>
+              </div>
+            ))
+          }
+        </div>
       </DndContext>
     </div>
   )

@@ -1,8 +1,12 @@
 .board-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.board-content {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  /* overflow: hidden; */
+  column-gap: 10px;
 }
 
 .board-column {
@@ -11,8 +15,10 @@
   align-items: start;
   gap: 4px;
   width: 100%;
-  max-width: 260px;
+  min-width: 185px;
+  max-width: 240px;
   padding: 5px;
+  margin-top: 50px;
 }
 
 .header-column-text {
@@ -83,6 +89,8 @@
 
 /* Input add task */
 .container-input-task {
+  display: flex;
+  column-gap: 5px;
   border-radius: 5px;
   padding: 8px 10px;
   margin-bottom: 6px;
@@ -98,6 +106,15 @@
   outline: none;
   font-size: 16px;
   font-weight: 500;
+}
+
+.line-is-over-droppable {
+  height: 4px;
+}
+
+.is-over-drop {
+  background-color: rgb(85, 85, 255);
+  transition: background-color 0.3s ease;
 }
 
 /* Footer */
@@ -128,4 +145,11 @@
   color: rgb(99, 99, 99);
   font-weight: 500;
   text-align: start;
+}
+
+@media screen and (max-width: 600px) {
+  .board-content {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
 }

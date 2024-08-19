@@ -3,6 +3,7 @@ import { UniqueIdentifier } from "@dnd-kit/core"
 export interface PropsDrop {
   children?: React.ReactNode
   id: string
+  toggleIsOverDroppable: (id:string, isOver: boolean) => void
 }
 
 export interface PropsDrag {
@@ -10,7 +11,7 @@ export interface PropsDrag {
   id: string
   text: string
   handleDeleteButton: (event: React.MouseEvent<HTMLButtonElement>, dragItemId: string) => void
-  handleEditButton: (newText: string, dragItemId: string) => void
+  handleEditButton: (newText: string, dragItemId: string) => string | undefined
 }
 
 export interface DropBox {

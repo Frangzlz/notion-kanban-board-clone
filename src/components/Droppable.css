@@ -1,10 +1,4 @@
 .droppable-box {
   width: 100%;
   min-height: 150px;
-  border-top: 5px solid transparent;
-}
-
-.isOverStyle {
-  border-top: 5px solid rgb(85, 85, 255);
-  transition: border-top 0.5s ease;
 }
