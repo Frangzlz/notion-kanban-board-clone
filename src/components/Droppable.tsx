@@ -1,8 +1,15 @@
 import { useDroppable } from "@dnd-kit/core";
-import { PropsDragDrop } from "../types";
+import { PropsDrop } from "../types";
+import "./Droppable.css"
+import { useEffect } from "react";
 
-export function Droppable ({ children, id }: PropsDragDrop) {
+export function Droppable ({ children, id, toggleIsOverDroppable }: PropsDrop) {
   const { isOver, setNodeRef } = useDroppable({ id: id })
+
+  useEffect(() => {
+    toggleIsOverDroppable(id, isOver)
+  }, [isOver])
+
  
   return (
     <div ref={setNodeRef} className="droppable-box">

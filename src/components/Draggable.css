@@ -1,0 +1,100 @@
+.draggable-box {
+  background-color: rgb(47, 47, 47);
+  font-weight: 500;
+  border-radius: 5px;
+  margin-bottom: 2px;
+}
+
+.draggable-box:hover {
+  background-color: rgb(58, 58, 58);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.draggable-dropbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+}
+
+.line-is-over {
+  height: 4px;
+}
+
+.is-over-draggable {
+  background-color: rgb(85, 85, 255);
+  transition: background-color 0.3s ease;
+}
+
+/* Buttons */
+.button-edit {
+  background-color: transparent;
+  border: 1px solid rgb(47, 47, 47);
+  padding: 3px 6px;
+  cursor: pointer;
+  background-color: rgb(47, 47, 47);
+  border-radius: 6px 0 0 6px;
+}
+
+.button-delete {
+  background-color: transparent;
+  border: 1px solid rgb(47, 47, 47);
+  padding: 3px 6px;
+  cursor: pointer;
+  background-color: rgb(47, 47, 47);
+  border-radius: 0 6px 6px 0;
+}
+
+.button-delete:hover, .button-edit:hover {
+  background-color: rgb(58, 58, 58);
+  transition: background-color 0.3s ease;
+}
+
+/* Input */
+.container-drag-text {
+  max-width: 200px;
+  overflow: auto;
+}
+
+.container-drag-text::-webkit-scrollbar {
+  height: 8px;
+}
+
+.container-drag-text::-webkit-scrollbar-thumb {
+  background-color: rgb(92, 92, 92);
+  border-radius: 5px;
+}
+
+.container-input-edit {
+  display: flex;
+  column-gap: 5px;
+  width: 100%;
+}
+
+.input-edit {
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.container-button-edit-delete {
+  position: relative;
+  width: 30%;
+  height: 15px;
+}
+
+.container-button-drag {
+  display: flex;
+  column-gap: 1px;
+  position: absolute;
+  right: 0;
+  top: -55%;
+}
