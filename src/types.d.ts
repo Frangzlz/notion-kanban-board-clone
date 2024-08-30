@@ -25,3 +25,8 @@ export interface DragItem {
   text: string
   parentId?: string
 }
+
+export interface useBoardProps {
+  draggableItems: DragItem[]
+  droppableBoxes: DropBox[]
+}

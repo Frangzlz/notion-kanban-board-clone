@@ -16,7 +16,7 @@ export function Draggable ({ id, text, handleDeleteButton, handleEditButton }: P
   const { active, isDragging, listeners, attributes, setNodeRef: setNodeRefDraggable, transform } = useDraggable({ id: id, disabled: editMode })
 
   const toggleEditMode = () => {
-    setEditMode(true)
+    setEditMode(prevState => !prevState)
   }
 
   const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,13 +29,16 @@ export function Draggable ({ id, text, handleDeleteButton, handleEditButton }: P
       if (newText) {
         setInputText(newText)
       }
-      setEditMode(false)
+      toggleEditMode()
     }
   }
 
   const handleBlur = () => {
-    setEditMode(false)
-    setInputText(text)
+    const newText = handleEditButton(inputText, id)
+    if (newText) {
+      setInputText(newText)
+    }
+    toggleEditMode()
   }
 
   const style = transform ? {

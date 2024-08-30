@@ -99,6 +99,7 @@
 }
 
 .input-add-task {
+  width: 100%;
   font-family: "Roboto", sans-serif;
   background-color: transparent;
   color: white;
